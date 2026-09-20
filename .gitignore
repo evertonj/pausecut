@@ -5,6 +5,7 @@ tools/
 exports/
 artifacts/
 browser-app/dist/
+deploy/msix/store-identity.json
 .env
 .vs/
 *.user

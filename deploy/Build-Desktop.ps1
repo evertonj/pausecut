@@ -43,6 +43,10 @@ try {
     Copy-Item -LiteralPath 'tools/bin/ffmpeg.exe' -Destination $taskTools
     Copy-Item -LiteralPath 'tools/bin/ffprobe.exe' -Destination $taskTools
     Copy-Item -LiteralPath 'desktop/LEIA-ME.txt' -Destination (Join-Path $taskStage 'LEIA-ME.txt')
+    $taskLicenses = Join-Path $taskStage 'licenses'
+    New-Item -ItemType Directory -Path $taskLicenses -Force | Out-Null
+    Copy-Item -LiteralPath 'tools/LICENSE' -Destination (Join-Path $taskLicenses 'FFmpeg-GPLv3.txt')
+    Copy-Item -LiteralPath 'THIRD-PARTY-NOTICES.txt' -Destination $taskStage
 
     Add-Type -AssemblyName System.IO.Compression
     Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -60,7 +64,7 @@ try {
 
     $taskRead = [IO.Compression.ZipFile]::OpenRead($taskZip)
     try {
-        foreach ($taskRequired in @('PauseCut.exe', 'PauseCut.Desktop.exe', 'wwwroot/index.html', 'tools/bin/ffmpeg.exe', 'tools/bin/ffprobe.exe', 'LEIA-ME.txt')) {
+        foreach ($taskRequired in @('PauseCut.exe', 'PauseCut.Desktop.exe', 'wwwroot/index.html', 'tools/bin/ffmpeg.exe', 'tools/bin/ffprobe.exe', 'LEIA-ME.txt', 'THIRD-PARTY-NOTICES.txt', 'licenses/FFmpeg-GPLv3.txt')) {
             if (-not $taskRead.GetEntry($taskRequired)) { throw "Arquivo ausente no pacote desktop: $taskRequired" }
         }
         Write-Host "Pacote desktop verificado: $($taskRead.Entries.Count) arquivos."

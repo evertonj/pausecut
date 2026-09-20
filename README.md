@@ -18,6 +18,22 @@ O primeiro empacotamento usa `NuGet.Desktop.Config` para baixar do NuGet.org som
 
 O instalador é compilado com Inno Setup 7. Instale o compilador oficial com `winget install --id JRSoftware.InnoSetup.7 -e -s winget` ou informe seu caminho em `-InnoCompiler`.
 
+### Microsoft Store (MSIX)
+
+Depois de reservar **PauseCut** no Partner Center, copie os três valores da página **Identidade do produto** para um arquivo local:
+
+```powershell
+Copy-Item deploy/msix/store-identity.example.json deploy/msix/store-identity.json
+```
+
+Preencha `identityName`, `publisher` e `publisherDisplayName` exatamente como exibidos no Partner Center. O arquivo real fica ignorado pelo Git. Com o Windows SDK instalado, gere o pacote x64 da Store. O script também aceita a ferramenta portátil oficial `winapp.exe` em `artifacts/winappcli/bin` como alternativa ao SDK completo:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File deploy/Build-MSIX.ps1
+```
+
+O resultado é `artifacts/PauseCut-1.1.0.0-Windows-x64.msix`, acompanhado do SHA-256. Para submissões MSIX, o Partner Center substitui a assinatura depois que o aplicativo passa pela certificação. O MSIX usa a identidade reservada, inclui os recursos visuais, os executáveis autocontidos e os avisos/licenças do FFmpeg.
+
 O build do site detecta o instalador e mostra versão e tamanho na seção **Desktop**. `deploy/Build-SharedHosting.ps1` inclui o EXE e o checksum em `downloads/`, disponibilizando o botão de download em `https://pausecut.homeforgelab.com/`.
 
 ## Executar no Windows

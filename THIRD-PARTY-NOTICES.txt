@@ -1,0 +1,22 @@
+PauseCut - avisos de componentes de terceiros
+=============================================
+
+FFmpeg e FFprobe
+----------------
+
+O PauseCut distribui executáveis do projeto FFmpeg como programas separados,
+invocados pelo aplicativo para analisar e processar arquivos de mídia.
+
+Versão usada no pacote atual: FFmpeg 9.0.1 essentials build (gyan.dev).
+Licença da compilação: GNU General Public License, versão 3 ou posterior.
+
+Projeto e código-fonte:
+https://ffmpeg.org/
+https://ffmpeg.org/download.html#get-sources
+
+Distribuição binária utilizada:
+https://www.gyan.dev/ffmpeg/builds/
+
+Os direitos autorais pertencem aos respectivos autores. O texto integral da
+licença acompanha a distribuição em licenses/FFmpeg-GPLv3.txt.
+
