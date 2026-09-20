@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createPages,validateConfig} from '../scripts/site-pages.mjs';
 const template=await readFile(new URL('../index.html',import.meta.url),'utf8');
-const config={baseUrl:'https://pausecut.homeforgelab.com/',adsenseSiteDomain:'homeforgelab.com',brand:'HomeForgeLab',responsibleName:'Responsável de teste',contactEmail:'editor@example.com',githubUrl:'https://github.com/evertonj',devToolsUrl:'https://dev.homeforgelab.com/',adsensePublisherId:'',desktopDownload:{version:'1.0.0',url:'https://pausecut.homeforgelab.com/downloads/PauseCut-Desktop-Windows-x64.zip',sha256Url:'https://pausecut.homeforgelab.com/downloads/PauseCut-Desktop-Windows-x64.zip.sha256'},updatedAt:'2026-09-20'};
+const config={baseUrl:'https://pausecut.homeforgelab.com/',adsenseSiteDomain:'homeforgelab.com',brand:'HomeForgeLab',responsibleName:'Responsável de teste',contactEmail:'editor@example.com',githubUrl:'https://github.com/evertonj',devToolsUrl:'https://dev.homeforgelab.com/',adsensePublisherId:'',desktopDownload:{version:'1.1.0',url:'https://pausecut.homeforgelab.com/downloads/PauseCut-Setup-Windows-x64.exe',sha256Url:'https://pausecut.homeforgelab.com/downloads/PauseCut-Setup-Windows-x64.exe.sha256'},updatedAt:'2026-09-20'};
 test('all public pages are linked and independently readable without the editor runtime',()=>{
   const pages=createPages(config,template);
   assert.equal(pages.size,13);
@@ -23,7 +23,9 @@ test('all public pages are linked and independently readable without the editor 
 test('desktop download is prominent, same-origin and describes the native acceleration',()=>{
   const page=createPages(config,template).get('index.html');
   assert.match(page,/id="download-desktop"/);
-  assert.match(page,/PauseCut-Desktop-Windows-x64\.zip/);
+  assert.match(page,/PauseCut-Setup-Windows-x64\.exe/);
+  assert.match(page,/Sem limite fixo de tamanho do vídeo/);
+  assert.match(page,/Editor desconhecido/);
   assert.match(page,/NVIDIA, Intel ou AMD/);
   assert.throws(()=>validateConfig({...config,desktopDownload:{...config.desktopDownload,url:'https://downloads.example.com/PauseCut.zip'}}));
 });
@@ -36,7 +38,7 @@ test('subdomain metadata and sitemap use its root URL; subdirectory layouts stil
   assert.match(pages.get('index.html'),/rel="canonical" href="https:\/\/pausecut.homeforgelab.com\/"/);
   assert.match(pages.get('sitemap.xml'),/<loc>https:\/\/pausecut.homeforgelab.com\/privacidade.html<\/loc>/);
   for(const html of pages.values())assert.doesNotMatch(html,/https:\/\/homeforgelab.com\/pausecut\//);
-  const folderPages=createPages({...config,baseUrl:'https://homeforgelab.com/pausecut/',desktopDownload:{...config.desktopDownload,url:'https://homeforgelab.com/pausecut/downloads/PauseCut-Desktop-Windows-x64.zip',sha256Url:'https://homeforgelab.com/pausecut/downloads/PauseCut-Desktop-Windows-x64.zip.sha256'}},template);
+  const folderPages=createPages({...config,baseUrl:'https://homeforgelab.com/pausecut/',desktopDownload:{...config.desktopDownload,url:'https://homeforgelab.com/pausecut/downloads/PauseCut-Setup-Windows-x64.exe',sha256Url:'https://homeforgelab.com/pausecut/downloads/PauseCut-Setup-Windows-x64.exe.sha256'}},template);
   assert.match(folderPages.get('sitemap.xml'),/<loc>https:\/\/homeforgelab.com\/pausecut\/privacidade.html<\/loc>/);
   assert.throws(()=>validateConfig({...config,adsenseSiteDomain:'another-site.example'}));
 });

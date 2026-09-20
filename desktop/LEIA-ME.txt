@@ -1,9 +1,16 @@
 PAUSECUT DESKTOP PARA WINDOWS 10/11 (64 BITS)
 ================================================
 
-1. Extraia todo o conteúdo do ZIP para uma pasta.
-2. Abra PauseCut.Desktop.exe.
-3. Se o Windows exibir uma proteção por o aplicativo não estar assinado,
+INSTALAÇÃO RECOMENDADA
+---------------------
+Execute PauseCut-Setup-Windows-x64.exe e abra o PauseCut pelo Menu Iniciar.
+
+PACOTE PORTÁTIL
+---------------
+Se você recebeu o ZIP portátil, extraia todo o conteúdo para uma pasta e abra
+PauseCut.Desktop.exe. Não execute o aplicativo ainda dentro do ZIP.
+
+Se o Windows exibir uma proteção porque o aplicativo não está assinado,
    confira a origem e o SHA-256 publicado no site antes de continuar.
 
 O aplicativo abre em uma janela dedicada do Microsoft Edge ou Google Chrome.
@@ -16,6 +23,8 @@ DESEMPENHO
 - Se nenhuma GPU compatível estiver disponível, usa a CPU nativa com todos os
   processadores lógicos detectados.
 - O vídeo não é enviado para a internet.
+- Não há limite fixo de tamanho no aplicativo desktop. Espaço livre em disco,
+  duração, codec e capacidade do computador continuam sendo limites práticos.
 
 ARQUIVOS TEMPORÁRIOS E LOG
 --------------------------

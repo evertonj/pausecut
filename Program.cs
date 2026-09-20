@@ -9,7 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddSimpleConsole(options => options.SingleLine = true);
 if (string.IsNullOrEmpty(builder.Configuration["urls"])) builder.WebHost.UseUrls("http://localhost:5080");
-var maxUpload = builder.Configuration.GetValue<long>("Video:MaxUploadBytes", 2_147_483_648);
+var configuredMaxUpload = builder.Configuration.GetValue<long>("Video:MaxUploadBytes", 0);
+long? maxUpload = configuredMaxUpload > 0 ? configuredMaxUpload : null;
 builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = maxUpload);
 builder.Services.AddSingleton<JobStore>();
 builder.Services.AddSingleton<MediaTools>();
@@ -70,8 +71,10 @@ app.MapPost("/api/jobs", async (HttpRequest request, JobStore store, Cancellatio
     var name = Path.GetFileName(request.Query["filename"].ToString().Replace('\\', '/'));
     if (string.IsNullOrWhiteSpace(name) || name.Length > 200 || !name.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase))
         return Results.BadRequest(new { error = "Selecione um arquivo .mp4." });
-    if (request.ContentLength is null or <= 0 || request.ContentLength > maxUpload)
-        return Results.BadRequest(new { error = $"Envie um arquivo de até {maxUpload / 1024 / 1024} MB com tamanho conhecido." });
+    if (request.ContentLength is null or <= 0)
+        return Results.BadRequest(new { error = "Envie um arquivo MP4 não vazio com tamanho conhecido." });
+    if (maxUpload is long uploadLimit && request.ContentLength > uploadLimit)
+        return Results.BadRequest(new { error = $"Envie um arquivo de até {uploadLimit / 1024 / 1024} MB." });
     var job = store.Create(name);
     try
     {
@@ -83,7 +86,7 @@ app.MapPost("/api/jobs", async (HttpRequest request, JobStore store, Cancellatio
             while ((read = await request.Body.ReadAsync(buffer, ct)) > 0)
             {
                 total += read;
-                if (total > maxUpload) throw new ArgumentException("Arquivo maior que o limite de upload.");
+                if (maxUpload is long streamLimit && total > streamLimit) throw new ArgumentException("Arquivo maior que o limite de upload.");
                 await target.WriteAsync(buffer.AsMemory(0, read), ct);
             }
             if (total == 0) throw new ArgumentException("O arquivo está vazio.");

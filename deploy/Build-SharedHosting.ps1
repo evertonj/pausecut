@@ -10,10 +10,10 @@ try {
     New-Item -ItemType Directory -Path $taskArtifacts -Force | Out-Null
     $taskZip = Join-Path $taskArtifacts 'PauseCut-Hostinger-Subdominio.zip'
     $taskDist = Join-Path $taskRoot 'browser-app/dist'
-    $taskDesktopZip = Join-Path $taskArtifacts 'PauseCut-Desktop-Windows-x64.zip'
+    $taskDesktopZip = Join-Path $taskArtifacts 'PauseCut-Setup-Windows-x64.exe'
     $taskDesktopHash = $taskDesktopZip + '.sha256'
     if (-not (Test-Path -LiteralPath $taskDesktopZip) -or -not (Test-Path -LiteralPath $taskDesktopHash)) {
-        throw 'Pacote desktop ausente. Execute deploy/Build-Desktop.ps1 antes de montar o site.'
+        throw 'Instalador desktop ausente. Execute deploy/Build-Desktop.ps1 antes de montar o site.'
     }
     Add-Type -AssemblyName System.IO.Compression
     Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -25,12 +25,12 @@ try {
             if ($taskRelative -match '(^|/)(App_Data|exports|tests|tools|node_modules)(/|$)' -or $taskRelative -eq '.env') { throw "Arquivo proibido: $taskRelative" }
             [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($taskArchive,$taskFile.FullName,$taskRelative) | Out-Null
         }
-        [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($taskArchive,$taskDesktopZip,'downloads/PauseCut-Desktop-Windows-x64.zip',[IO.Compression.CompressionLevel]::NoCompression) | Out-Null
-        [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($taskArchive,$taskDesktopHash,'downloads/PauseCut-Desktop-Windows-x64.zip.sha256') | Out-Null
+        [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($taskArchive,$taskDesktopZip,'downloads/PauseCut-Setup-Windows-x64.exe',[IO.Compression.CompressionLevel]::NoCompression) | Out-Null
+        [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($taskArchive,$taskDesktopHash,'downloads/PauseCut-Setup-Windows-x64.exe.sha256') | Out-Null
     } finally { $taskArchive.Dispose(); $taskZipStream.Dispose() }
     $taskRead = [IO.Compression.ZipFile]::OpenRead($taskZip)
     try {
-        foreach ($taskRequired in @('index.html','.htaccess','robots.txt','app.js','engine.js','performance.js','threaded-core.js','vendor/core/ffmpeg-core.wasm','vendor/core-mt/ffmpeg-core.wasm','vendor/core-mt/ffmpeg-core.worker.js','vendor/ffmpeg/worker.js','guias.html','privacidade.html','contato.html','termos.html','sitemap.xml','downloads/PauseCut-Desktop-Windows-x64.zip','downloads/PauseCut-Desktop-Windows-x64.zip.sha256')) {
+        foreach ($taskRequired in @('index.html','.htaccess','robots.txt','app.js','engine.js','performance.js','threaded-core.js','vendor/core/ffmpeg-core.wasm','vendor/core-mt/ffmpeg-core.wasm','vendor/core-mt/ffmpeg-core.worker.js','vendor/ffmpeg/worker.js','guias.html','privacidade.html','contato.html','termos.html','sitemap.xml','downloads/PauseCut-Setup-Windows-x64.exe','downloads/PauseCut-Setup-Windows-x64.exe.sha256')) {
             if (-not $taskRead.GetEntry($taskRequired)) { throw "Arquivo ausente: $taskRequired" }
         }
         if ($taskRead.GetEntry('pausecut/index.html')) { throw 'O pacote do subdomínio não pode ter uma pasta pausecut extra.' }

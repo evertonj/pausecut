@@ -6,17 +6,19 @@ Aplicação web local em **C# / ASP.NET Core .NET 8** para remover pausas de um 
 
 A versão desktop usa o **FFmpeg nativo de 64 bits**, testa automaticamente a aceleração de vídeo **NVIDIA NVENC, Intel Quick Sync e AMD AMF** e, quando não há GPU compatível, usa a CPU nativa com todos os processadores lógicos detectados. Ela é autocontida: o usuário não precisa instalar .NET nem FFmpeg, e o vídeo não sai do computador.
 
-Para gerar o ZIP de distribuição:
+Para gerar o instalador e o pacote portátil:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File deploy/Build-Desktop.ps1
 ```
 
-O resultado é `artifacts/PauseCut-Desktop-Windows-x64.zip`, acompanhado pelo arquivo `.sha256`. O usuário deve extrair o ZIP e abrir `PauseCut.Desktop.exe`. A janela dedicada usa Microsoft Edge ou Google Chrome; ao fechá-la, o motor local é encerrado. Temporários e logs ficam em `%LOCALAPPDATA%\PauseCut`.
+Os resultados são `artifacts/PauseCut-Setup-Windows-x64.exe` e `artifacts/PauseCut-Desktop-Windows-x64.zip`, ambos acompanhados por `.sha256`. O instalador cria o atalho do Menu Iniciar, oferece um atalho opcional na Área de Trabalho e registra a desinstalação por usuário. A janela dedicada usa Microsoft Edge ou Google Chrome; ao fechá-la, o motor local é encerrado. Temporários e logs ficam em `%LOCALAPPDATA%\PauseCut`.
 
 O primeiro empacotamento usa `NuGet.Desktop.Config` para baixar do NuGet.org somente os pacotes oficiais do runtime .NET 8 para Windows x64. Os builds comuns continuam usando `NuGet.Config` sem fontes externas.
 
-O build do site detecta esse ZIP e mostra versão e tamanho na seção **Desktop**. `deploy/Build-SharedHosting.ps1` inclui o pacote e o checksum em `downloads/`, disponibilizando o botão de download em `https://pausecut.homeforgelab.com/`.
+O instalador é compilado com Inno Setup 7. Instale o compilador oficial com `winget install --id JRSoftware.InnoSetup.7 -e -s winget` ou informe seu caminho em `-InnoCompiler`.
+
+O build do site detecta o instalador e mostra versão e tamanho na seção **Desktop**. `deploy/Build-SharedHosting.ps1` inclui o EXE e o checksum em `downloads/`, disponibilizando o botão de download em `https://pausecut.homeforgelab.com/`.
 
 ## Executar no Windows
 
@@ -42,7 +44,7 @@ Os presets Suave, Equilibrado e Ágil são pontos de partida. Reduzir o limite e
 
 ## Como funciona
 
-1. O servidor grava o upload diretamente em disco, com limite padrão de 2 GiB.
+1. O servidor grava o upload diretamente em disco. No desktop e no uso local não há limite fixo de tamanho; espaço em disco, duração e formato continuam sendo limites práticos.
 2. FFprobe verifica vídeo, áudio, duração e taxa de quadros.
 3. FFmpeg `silencedetect` encontra intervalos abaixo do volume configurado na primeira faixa de áudio.
 4. `Core/CutPlanner.cs` calcula em C# as partes preservadas e removidas, protege as margens e arredonda os cortes para dentro das pausas, respeitando os quadros.
@@ -65,13 +67,13 @@ O processamento ocorre em segundo plano, com fila, progresso e cancelamento. A i
 
 Baixe uma distribuição com **FFmpeg 5 ou superior, FFprobe e libx264** pelos links de Windows na [página oficial de download](https://ffmpeg.org/download.html). A pasta `tools` não entra no Git. Configure `Video:FfmpegPath` e `Video:FfprobePath` em `appsettings.json` com caminhos absolutos, ou com `ffmpeg` e `ffprobe` se estiverem no PATH. No Linux/macOS, use os respectivos executáveis.
 
-Também é possível sobrescrever por variáveis de ambiente `Video__FfmpegPath` e `Video__FfprobePath`. Para uploads maiores, ajuste `Video:MaxUploadBytes` e os limites do proxy/IIS, caso use um. O servidor padrão é Kestrel em localhost.
+Também é possível sobrescrever por variáveis de ambiente `Video__FfmpegPath` e `Video__FfprobePath`. `Video:MaxUploadBytes` igual a `0` remove o teto configurado; um valor positivo aplica esse limite em bytes. Em uma publicação remota, o proxy, CDN ou IIS ainda pode impor um limite próprio. O servidor padrão é Kestrel em localhost.
 
 ## Publicar na Hostinger
 
 Para o plano gerenciado com `public_html`, use a **versão para navegador** em [browser-app](browser-app/README.md) e o pacote **`artifacts/PauseCut-Hostinger-Subdominio.zip`**, configurado para **https://pausecut.homeforgelab.com/**. Extraia diretamente na pasta raiz atribuída ao subdomínio. Veja [instruções para seu plano atual](PUBLICAR-HOSTINGER-COMPARTILHADA.md). O vídeo é processado localmente no navegador, sem backend nem upload.
 
-Antes de gerar o pacote da Hostinger, execute `deploy/Build-Desktop.ps1`; o pacote do site inclui o download desktop em `downloads/PauseCut-Desktop-Windows-x64.zip`.
+Antes de gerar o pacote da Hostinger, execute `deploy/Build-Desktop.ps1`; o pacote do site inclui o instalador em `downloads/PauseCut-Setup-Windows-x64.exe`.
 
 Se usar VPS, veja [PUBLICAR-HOSTINGER.md](PUBLICAR-HOSTINGER.md). O pacote `artifacts/PauseCut-Hostinger-VPS.zip` é a versão ASP.NET Release para VPS Linux com Docker, FFmpeg, HTTPS e senha. A hospedagem compartilhada comum não executa o backend ASP.NET. A configuração de produção usa FFmpeg pelo PATH; a configuração de desenvolvimento mantém os executáveis Windows locais.
 

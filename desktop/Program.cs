@@ -65,6 +65,7 @@ internal static class Program
             start.Environment["Video__DataPath"] = dataRoot;
             start.Environment["Video__ProcessingLocation"] = "desktop";
             start.Environment["Video__Encoder"] = "auto";
+            start.Environment["Video__MaxUploadBytes"] = "0";
             server = new Process { StartInfo = start, EnableRaisingEvents = true };
             server.OutputDataReceived += (_, eventArgs) => WriteLog(log, eventArgs.Data);
             server.ErrorDataReceived += (_, eventArgs) => WriteLog(log, eventArgs.Data);

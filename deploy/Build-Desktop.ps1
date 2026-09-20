@@ -1,9 +1,25 @@
-param([switch]$NoRestore)
+param([switch]$NoRestore, [string]$InnoCompiler)
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path -Parent $PSScriptRoot
 $taskArtifacts = Join-Path $taskRoot 'artifacts'
 $taskStage = Join-Path $taskArtifacts ('desktop-' + [Guid]::NewGuid().ToString('N'))
 $taskZip = Join-Path $taskArtifacts 'PauseCut-Desktop-Windows-x64.zip'
+$taskInstaller = Join-Path $taskArtifacts 'PauseCut-Setup-Windows-x64.exe'
+$taskProject = [xml](Get-Content -LiteralPath (Join-Path $taskRoot 'desktop/PauseCut.Desktop.csproj') -Raw)
+$taskVersion = [string]$taskProject.Project.PropertyGroup.Version
+if ([string]::IsNullOrWhiteSpace($taskVersion)) { throw 'A versão do aplicativo desktop não foi definida.' }
+if ([string]::IsNullOrWhiteSpace($InnoCompiler)) {
+    $taskInnoCandidates = @(
+        (Join-Path $env:LOCALAPPDATA 'Programs/Inno Setup 7/ISCC.exe'),
+        'C:\Program Files\Inno Setup 7\ISCC.exe',
+        'C:\Program Files (x86)\Inno Setup 7\ISCC.exe',
+        'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
+    )
+    $InnoCompiler = $taskInnoCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+}
+if ([string]::IsNullOrWhiteSpace($InnoCompiler) -or -not (Test-Path -LiteralPath $InnoCompiler)) {
+    throw 'Inno Setup não encontrado. Instale com: winget install --id JRSoftware.InnoSetup.7 -e -s winget'
+}
 New-Item -ItemType Directory -Path $taskStage -Force | Out-Null
 Push-Location $taskRoot
 try {
@@ -55,6 +71,15 @@ try {
     [IO.File]::WriteAllText(($taskZip + '.sha256'), "$taskHash  PauseCut-Desktop-Windows-x64.zip`n", [Text.Encoding]::ASCII)
     Get-Item -LiteralPath $taskZip | Select-Object FullName, Length
     Write-Host "SHA-256: $taskHash"
+
+    if (Test-Path -LiteralPath $taskInstaller) { Remove-Item -LiteralPath $taskInstaller -Force }
+    & $InnoCompiler "--define=BuildDir=$taskStage" "--define=OutputDir=$taskArtifacts" "--define=AppVersion=$taskVersion" (Join-Path $taskRoot 'deploy/PauseCut.iss')
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $taskInstaller)) { throw 'A compilação do instalador falhou.' }
+    if ((Get-Item -LiteralPath $taskInstaller).Length -lt 50MB) { throw 'O instalador gerado parece incompleto.' }
+    $taskInstallerHash = (Get-FileHash -LiteralPath $taskInstaller -Algorithm SHA256).Hash.ToLowerInvariant()
+    [IO.File]::WriteAllText(($taskInstaller + '.sha256'), "$taskInstallerHash  PauseCut-Setup-Windows-x64.exe`n", [Text.Encoding]::ASCII)
+    Get-Item -LiteralPath $taskInstaller | Select-Object FullName, Length
+    Write-Host "SHA-256 do instalador: $taskInstallerHash"
 } finally {
     Pop-Location
     if (Test-Path -LiteralPath $taskStage) { Remove-Item -LiteralPath $taskStage -Recurse -Force }

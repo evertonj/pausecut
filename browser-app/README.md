@@ -29,7 +29,7 @@ powershell -ExecutionPolicy Bypass -File deploy/Build-SharedHosting.ps1
 
 O resultado é `artifacts/PauseCut-Hostinger-Subdominio.zip`. Veja `PUBLICAR-HOSTINGER-COMPARTILHADA.md`.
 
-Para publicar também o download do aplicativo Windows, gere primeiro `artifacts/PauseCut-Desktop-Windows-x64.zip` com `deploy/Build-Desktop.ps1`. O empacotador da hospedagem inclui o ZIP e seu SHA-256 na pasta pública `downloads/`; a página inicial mostra automaticamente a versão e o tamanho do pacote.
+Para publicar também o aplicativo Windows, gere primeiro `artifacts/PauseCut-Setup-Windows-x64.exe` com `deploy/Build-Desktop.ps1`. O empacotador da hospedagem inclui o instalador e seu SHA-256 na pasta pública `downloads/`; a página inicial mostra automaticamente a versão e o tamanho do pacote. O mesmo build também mantém um ZIP portátil nos artefatos locais.
 
 ## Como o processamento funciona
 

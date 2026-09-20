@@ -1,6 +1,6 @@
 const $ = id => document.getElementById(id);
 const presets = { gentle: [-40, 350, 80], balanced: [-35, 180, 40], tight: [-30, 100, 20] };
-let job = null, ready = false, uploading = false, poll = null, maxBytes = 2147483648, resultView = false;
+let job = null, ready = false, uploading = false, poll = null, maxBytes = null, resultView = false;
 const busy = () => uploading || (job && ['uploading', 'queued', 'analyzing', 'rendering'].includes(job.status));
 const settings = () => ({ thresholdDb: +$('threshold').value, minSilenceMs: +$('minimum').value, paddingMs: +$('padding').value });
 const format = seconds => {
@@ -114,7 +114,8 @@ async function selectJob(id) {
 function upload(file) {
   if(!file || busy()) return;
   if(!file.name.toLowerCase().endsWith('.mp4')) return message('Escolha um arquivo MP4.','error');
-  if(!file.size || file.size>maxBytes) return message(`Escolha um MP4 de até ${Math.round(maxBytes/1024/1024)} MB.`,'error');
+  if(!file.size) return message('Escolha um arquivo MP4 não vazio.','error');
+  if(maxBytes && file.size>maxBytes) return message(`Escolha um MP4 de até ${Math.round(maxBytes/1024/1024)} MB.`,'error');
   uploading=true; updateButtons(); message(''); $('uploadProgress').classList.remove('hidden'); $('uploadBar').value=0;
   const xhr=new XMLHttpRequest(); xhr.open('POST',`/api/jobs?filename=${encodeURIComponent(file.name)}`); xhr.setRequestHeader('Content-Type','application/octet-stream');
   xhr.upload.onprogress=e=>{ if(e.lengthComputable) { const p=Math.round(e.loaded/e.total*100); $('uploadBar').value=p; $('uploadText').textContent=`Enviando ${p}%`; }};
@@ -150,7 +151,7 @@ $('report').onclick=async()=>{try {const data=await api(`/api/jobs/${job.id}/cut
 $('delete').onclick=async()=>{try { $('player').removeAttribute('src');$('player').load();await api(`/api/jobs/${job.id}`,{method:'DELETE'});location.reload();}catch(e){message(e.message,'error');viewResult(resultView);}};
 window.addEventListener('resize',drawTimeline);
 async function init() {
-  try { const health=await api('/api/health');ready=health.ready;maxBytes=health.maxUploadBytes;const remote=health.processingLocation==='server';const desktop=health.processingLocation==='desktop';$('processingLabel').textContent=remote?'PROCESSAMENTO NO SERVIDOR':desktop?'DESKTOP · FFMPEG NATIVO':'PROCESSAMENTO LOCAL';$('storageLabel').textContent=remote?'Arquivos temporários no servidor. Baixe o resultado; reiniciar o serviço apaga os arquivos.':desktop?'Processamento privado neste computador. Fechar a janela encerra o motor local.':'Seus arquivos ficam neste computador e são temporários.';const localReady=desktop?`Pronto para processar com ${health.videoEncoder || `${health.cpuThreads || 1} threads de CPU`}. O vídeo não sai deste computador.`:'Pronto para processar. O vídeo é enviado apenas para o servidor local.';$('health').textContent=ready?(remote?'Pronto para processar. Seu vídeo será enviado ao servidor deste site.':localReady):health.error;$('health').className=`notice ${ready?'success':'error'}`;$('uploadLimit').textContent=`MP4 · até ${Math.round(maxBytes/1024/1024)} MB`;await refreshList();const id=$('recent').options[1]?.value;if(id)await selectJob(id); }
+  try { const health=await api('/api/health');ready=health.ready;maxBytes=health.maxUploadBytes;const remote=health.processingLocation==='server';const desktop=health.processingLocation==='desktop';$('processingLabel').textContent=remote?'PROCESSAMENTO NO SERVIDOR':desktop?'DESKTOP · FFMPEG NATIVO':'PROCESSAMENTO LOCAL';$('storageLabel').textContent=remote?'Arquivos temporários no servidor. Baixe o resultado; reiniciar o serviço apaga os arquivos.':desktop?'Processamento privado neste computador. Fechar a janela encerra o motor local.':'Seus arquivos ficam neste computador e são temporários.';const localReady=desktop?`Pronto para processar com ${health.videoEncoder || `${health.cpuThreads || 1} threads de CPU`}. O vídeo não sai deste computador.`:'Pronto para processar. O vídeo é enviado apenas para o servidor local.';$('health').textContent=ready?(remote?'Pronto para processar. Seu vídeo será enviado ao servidor deste site.':localReady):health.error;$('health').className=`notice ${ready?'success':'error'}`;$('uploadLimit').textContent=maxBytes?`MP4 · até ${Math.round(maxBytes/1024/1024)} MB`:'MP4 · sem limite fixo';await refreshList();const id=$('recent').options[1]?.value;if(id)await selectJob(id); }
   catch(e){$('health').textContent=e.message;$('health').className='notice error';}changed();drawTimeline();
 }
 init();

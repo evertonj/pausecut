@@ -7,7 +7,7 @@ const root=fileURLToPath(new URL('../',import.meta.url));
 const dist=path.join(root,'dist');
 const allowed=['styles.css','site.css','app.js','engine.js','planner.js','performance.js','threaded-core.js','.htaccess','vendor'];
 const config=JSON.parse(await readFile(path.join(root,'site.config.json'),'utf8'));
-const desktopZip=path.join(root,'..','artifacts','PauseCut-Desktop-Windows-x64.zip');
+const desktopZip=path.join(root,'..','artifacts','PauseCut-Setup-Windows-x64.exe');
 try {
   const desktopStat=await stat(desktopZip);
   const checksum=(await readFile(desktopZip+'.sha256','utf8')).trim().split(/\s+/)[0];
