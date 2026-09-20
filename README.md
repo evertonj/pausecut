@@ -32,7 +32,7 @@ Preencha `identityName`, `publisher` e `publisherDisplayName` exatamente como ex
 powershell -ExecutionPolicy Bypass -File deploy/Build-MSIX.ps1
 ```
 
-O resultado é `artifacts/PauseCut-1.1.0.0-Windows-x64.msix`, acompanhado do SHA-256. Para submissões MSIX, o Partner Center substitui a assinatura depois que o aplicativo passa pela certificação. O MSIX usa a identidade reservada, inclui os recursos visuais, os executáveis autocontidos e os avisos/licenças do FFmpeg.
+O resultado padrão é `artifacts/PauseCut-1.1.0.1-Windows-x64.msix`, acompanhado do SHA-256. Use `-Revision` para incrementar o quarto número em novas revisões enviadas à Store sem alterar a versão pública do aplicativo. Para submissões MSIX, o Partner Center substitui a assinatura depois que o aplicativo passa pela certificação. O MSIX usa a identidade reservada, inclui os recursos visuais, os executáveis autocontidos e os avisos/licenças do FFmpeg.
 
 O build do site detecta o instalador e mostra versão e tamanho na seção **Desktop**. `deploy/Build-SharedHosting.ps1` inclui o EXE e o checksum em `downloads/`, disponibilizando o botão de download em `https://pausecut.homeforgelab.com/`.
 
