@@ -2,8 +2,6 @@ param(
     [string]$IdentityFile = 'deploy/msix/store-identity.json',
     [string]$MakeAppx,
     [string]$WinAppCli = 'artifacts/winappcli/bin/winapp.exe',
-    [ValidateRange(0, 65535)]
-    [int]$Revision = 1,
     [switch]$NoRestore
 )
 
@@ -40,7 +38,8 @@ if ($taskUseWinAppCli -and -not (Test-Path -LiteralPath $taskWinAppPath)) {
 $taskProject = [xml](Get-Content -LiteralPath (Join-Path $taskRoot 'desktop/PauseCut.Desktop.csproj') -Raw)
 $taskVersion = [string]$taskProject.Project.PropertyGroup.Version
 if ($taskVersion -notmatch '^\d+\.\d+\.\d+(?:\.\d+)?$') { throw 'A versão do aplicativo desktop é inválida.' }
-if (($taskVersion.Split('.')).Count -eq 3) { $taskVersion += ".$Revision" }
+if (($taskVersion.Split('.')).Count -eq 3) { $taskVersion += '.0' }
+if (-not $taskVersion.EndsWith('.0')) { throw 'A Microsoft Store exige que o quarto número da versão do pacote seja zero.' }
 
 $taskArtifacts = Join-Path $taskRoot 'artifacts'
 $taskStage = Join-Path $taskArtifacts ('msix-' + [Guid]::NewGuid().ToString('N'))

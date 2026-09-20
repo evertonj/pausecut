@@ -8,6 +8,6 @@
     <AssemblyName>PauseCut.Desktop</AssemblyName>
     <Product>PauseCut Desktop</Product>
     <Description>Inicializador desktop do PauseCut com FFmpeg nativo.</Description>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
   </PropertyGroup>
 </Project>
