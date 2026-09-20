@@ -70,5 +70,6 @@ export function createPages(config, indexTemplate) {
   }
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...pages.keys()].map(file=>`<url><loc>${escapeHtml(new URL(file==='index.html'?'':file,config.baseUrl).href)}</loc></url>`).join('')}</urlset>`;
   pages.set('sitemap.xml',sitemap);
+  pages.set('robots.txt',`User-agent: *\nAllow: /\n\nSitemap: ${new URL('sitemap.xml',config.baseUrl).href}\n`);
   return pages;
 }

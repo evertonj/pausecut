@@ -20,11 +20,11 @@ Por FTP/SFTP, copie o conteúdo de `browser-app/dist` diretamente para a pasta r
 
 ## Preparação para AdSense
 
-O pacote inclui guias, Sobre, Contato, Privacidade e Termos. Veja **PREPARAR-ADSENSE.md**, incluído no ZIP em `CONFIGURAR-ADSENSE/LEIA-ME-ADSENSE.md`.
+O pacote inclui guias, Sobre, Contato, Privacidade e Termos. Veja **PREPARAR-ADSENSE.md** no repositório antes de conectar a conta.
 
 Antes de solicitar análise, confirme nome do responsável e e-mail público funcional em `browser-app/site.config.json` e gere novamente o ZIP. O endereço já está configurado para o subdomínio. O ID do AdSense pode ser preenchido depois.
 
-O cadastro no AdSense continua sendo de **homeforgelab.com**. A meta tag de identificação é incluída nas páginas do editor quando há ID válido; a verificação do domínio principal e a configuração de ads.txt continuam exigindo integração na raiz de `homeforgelab.com`. A pasta `CONFIGURAR-ADSENSE` contém materiais de orientação, não uma alteração automática dessas configurações. Nenhum anúncio é carregado por esta versão.
+O cadastro no AdSense continua sendo de **homeforgelab.com**. A meta tag de identificação é incluída nas páginas do editor quando há ID válido; a verificação do domínio principal e a configuração de ads.txt continuam exigindo integração na raiz de `homeforgelab.com`. Os materiais gerados ficam localmente em `artifacts/adsense-integration` e não são publicados no subdomínio. Nenhum anúncio é carregado por esta versão.
 
 ## Uso e limites
 

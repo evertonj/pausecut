@@ -27,15 +27,10 @@ try {
         }
         [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($taskArchive,$taskDesktopZip,'downloads/PauseCut-Desktop-Windows-x64.zip',[IO.Compression.CompressionLevel]::NoCompression) | Out-Null
         [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($taskArchive,$taskDesktopHash,'downloads/PauseCut-Desktop-Windows-x64.zip.sha256') | Out-Null
-        [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($taskArchive,(Join-Path $taskRoot 'PUBLICAR-HOSTINGER-COMPARTILHADA.md'),'LEIA-ME-PUBLICACAO.md') | Out-Null
-        [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($taskArchive,(Join-Path $taskRoot 'PREPARAR-ADSENSE.md'),'CONFIGURAR-ADSENSE/LEIA-ME-ADSENSE.md') | Out-Null
-        foreach ($taskIntegrationFile in Get-ChildItem -LiteralPath (Join-Path $taskArtifacts 'adsense-integration') -File) {
-            [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($taskArchive,$taskIntegrationFile.FullName,('CONFIGURAR-ADSENSE/'+$taskIntegrationFile.Name)) | Out-Null
-        }
     } finally { $taskArchive.Dispose(); $taskZipStream.Dispose() }
     $taskRead = [IO.Compression.ZipFile]::OpenRead($taskZip)
     try {
-        foreach ($taskRequired in @('index.html','.htaccess','app.js','engine.js','performance.js','threaded-core.js','vendor/core/ffmpeg-core.wasm','vendor/core-mt/ffmpeg-core.wasm','vendor/core-mt/ffmpeg-core.worker.js','vendor/ffmpeg/worker.js','guias.html','privacidade.html','contato.html','termos.html','sitemap.xml','downloads/PauseCut-Desktop-Windows-x64.zip','downloads/PauseCut-Desktop-Windows-x64.zip.sha256','CONFIGURAR-ADSENSE/LEIA-ME-ADSENSE.md')) {
+        foreach ($taskRequired in @('index.html','.htaccess','robots.txt','app.js','engine.js','performance.js','threaded-core.js','vendor/core/ffmpeg-core.wasm','vendor/core-mt/ffmpeg-core.wasm','vendor/core-mt/ffmpeg-core.worker.js','vendor/ffmpeg/worker.js','guias.html','privacidade.html','contato.html','termos.html','sitemap.xml','downloads/PauseCut-Desktop-Windows-x64.zip','downloads/PauseCut-Desktop-Windows-x64.zip.sha256')) {
             if (-not $taskRead.GetEntry($taskRequired)) { throw "Arquivo ausente: $taskRequired" }
         }
         if ($taskRead.GetEntry('pausecut/index.html')) { throw 'O pacote do subdomínio não pode ter uma pasta pausecut extra.' }

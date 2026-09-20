@@ -43,7 +43,7 @@ Depois de preencher um ID válido, o build inclui a meta tag `google-adsense-acc
 - `artifacts/adsense-integration/ads.txt`: contém a linha da conta para configurar na raiz.
 - `artifacts/adsense-integration/STATUS.json`: informa pendências de contato e se há conta configurada.
 
-O ZIP traz esses materiais dentro de **`CONFIGURAR-ADSENSE`**. O conteúdo do editor fica diretamente na raiz do ZIP. Os materiais de integração são para instalação manual no domínio principal; extrair o ZIP no subdomínio não altera o WordPress nem o ads.txt de `homeforgelab.com`. Se o ID estiver vazio, os arquivos de meta tag e ads.txt não são criados; não há identificador fictício no pacote.
+Esses materiais permanecem somente em **`artifacts/adsense-integration`**, fora do ZIP público. Eles são para instalação manual no domínio principal; extrair o ZIP no subdomínio não altera o WordPress nem o ads.txt de `homeforgelab.com`. Se o ID estiver vazio, os arquivos de meta tag e ads.txt não são criados; não há identificador fictício no pacote. Mantê-los fora da raiz pública evita expor documentação operacional e arquivos de estado como páginas do site.
 
 No painel AdSense, adicione o domínio e escolha a opção de verificação compatível com o que você publicou. Se escolher meta tag, confira a tag no HEAD da página inicial do domínio. Siga a instrução exibida pela sua conta e, depois de validar a propriedade, solicite a análise. A configuração do pacote não solicita a análise por você.
 

@@ -6,8 +6,9 @@ const template=await readFile(new URL('../index.html',import.meta.url),'utf8');
 const config={baseUrl:'https://pausecut.homeforgelab.com/',adsenseSiteDomain:'homeforgelab.com',brand:'HomeForgeLab',responsibleName:'Responsável de teste',contactEmail:'editor@example.com',githubUrl:'https://github.com/evertonj',adsensePublisherId:'',desktopDownload:{version:'1.0.0',url:'https://pausecut.homeforgelab.com/downloads/PauseCut-Desktop-Windows-x64.zip',sha256Url:'https://pausecut.homeforgelab.com/downloads/PauseCut-Desktop-Windows-x64.zip.sha256'},updatedAt:'2026-09-20'};
 test('all public pages are linked and independently readable without the editor runtime',()=>{
   const pages=createPages(config,template);
-  assert.equal(pages.size,12);
+  assert.equal(pages.size,13);
   for(const [file,html] of pages){
+    if(!file.endsWith('.html'))continue;
     if(!file.endsWith('.html'))continue;
     assert.match(html,/<html lang="pt-BR">/);
     assert.match(html,/<h1/);
@@ -17,6 +18,7 @@ test('all public pages are linked and independently readable without the editor 
     if(file!=='index.html')assert.doesNotMatch(html,/src="\.\/app.js"/);
     assert.ok(pages.get('sitemap.xml').includes(new URL(file==='index.html'?'':file,config.baseUrl).href));
   }
+  assert.equal(pages.get('robots.txt'),`User-agent: *\nAllow: /\n\nSitemap: ${config.baseUrl}sitemap.xml\n`);
 });
 test('desktop download is prominent, same-origin and describes the native acceleration',()=>{
   const page=createPages(config,template).get('index.html');
