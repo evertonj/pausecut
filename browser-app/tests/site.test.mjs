@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createPages,validateConfig} from '../scripts/site-pages.mjs';
 const template=await readFile(new URL('../index.html',import.meta.url),'utf8');
-const config={baseUrl:'https://pausecut.homeforgelab.com/',adsenseSiteDomain:'homeforgelab.com',brand:'HomeForgeLab',responsibleName:'Responsável de teste',contactEmail:'editor@example.com',githubUrl:'https://github.com/evertonj',adsensePublisherId:'',desktopDownload:{version:'1.0.0',url:'https://pausecut.homeforgelab.com/downloads/PauseCut-Desktop-Windows-x64.zip',sha256Url:'https://pausecut.homeforgelab.com/downloads/PauseCut-Desktop-Windows-x64.zip.sha256'},updatedAt:'2026-09-20'};
+const config={baseUrl:'https://pausecut.homeforgelab.com/',adsenseSiteDomain:'homeforgelab.com',brand:'HomeForgeLab',responsibleName:'Responsável de teste',contactEmail:'editor@example.com',githubUrl:'https://github.com/evertonj',devToolsUrl:'https://dev.homeforgelab.com/',adsensePublisherId:'',desktopDownload:{version:'1.0.0',url:'https://pausecut.homeforgelab.com/downloads/PauseCut-Desktop-Windows-x64.zip',sha256Url:'https://pausecut.homeforgelab.com/downloads/PauseCut-Desktop-Windows-x64.zip.sha256'},updatedAt:'2026-09-20'};
 test('all public pages are linked and independently readable without the editor runtime',()=>{
   const pages=createPages(config,template);
   assert.equal(pages.size,13);
@@ -53,6 +53,7 @@ test('public identity and mail link are escaped and invalid account IDs are reje
   assert.match(pages.get('contato.html'),/A &amp; B &lt;Editor&gt;/);
   assert.match(pages.get('privacidade.html'),/mailto:editor@example.com/);
   assert.match(pages.get('contato.html'),/https:\/\/github\.com\/evertonj/);
+  assert.match(pages.get('index.html'),/>Ferramentas de Software<\/a>/);
   assert.throws(()=>validateConfig({...config,adsensePublisherId:'ca-pub-123'}));
   assert.throws(()=>validateConfig({...config,contactEmail:'bad@example.com" onclick="oops'}));
   assert.throws(()=>validateConfig({...config,baseUrl:'http://homeforgelab.com/pausecut/'}));

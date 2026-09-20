@@ -12,6 +12,10 @@ export function validateConfig(config) {
     const github = new URL(config.githubUrl);
     if(github.protocol!=='https:' || github.hostname!=='github.com' || github.search || github.hash) throw new Error('GitHub URL must be an HTTPS github.com profile or repository URL');
   }
+  if(config.devToolsUrl) {
+    const devTools = new URL(config.devToolsUrl);
+    if(devTools.protocol!=='https:' || !devTools.pathname.endsWith('/') || (devTools.hostname!==url.hostname && !devTools.hostname.endsWith('.'+config.adsenseSiteDomain))) throw new Error('Dev Tools URL must be an HTTPS URL under the configured site domain');
+  }
   if(config.adsensePublisherId && !/^ca-pub-\d{16}$/.test(config.adsensePublisherId)) throw new Error('AdSense ID must have the format ca-pub- followed by 16 digits');
   if(config.desktopDownload?.url) {
     const download = new URL(config.desktopDownload.url);
@@ -27,7 +31,8 @@ export function header(current='index.html') {
 }
 export function footer(config) {
   const github=config.githubUrl?`<a href="${escapeHtml(config.githubUrl)}" rel="me external">GitHub</a>`:'';
-  return `<footer class="site-footer"><div><strong>PauseCut / ${escapeHtml(config.brand)}</strong><p>Pré-edição de vídeo com processamento no seu dispositivo.</p></div><nav aria-label="Informações do site"><a href="./sobre.html">Sobre</a><a href="./contato.html">Contato</a>${github}<a href="./privacidade.html">Privacidade</a><a href="./termos.html">Termos de uso</a></nav></footer>`;
+  const devTools=config.devToolsUrl?`<a href="${escapeHtml(config.devToolsUrl)}">Ferramentas de Software</a>`:'';
+  return `<footer class="site-footer"><div><strong>PauseCut / ${escapeHtml(config.brand)}</strong><p>Pré-edição de vídeo com processamento no seu dispositivo.</p></div><nav aria-label="Informações do site"><a href="./sobre.html">Sobre</a><a href="./contato.html">Contato</a>${devTools}${github}<a href="./privacidade.html">Privacidade</a><a href="./termos.html">Termos de uso</a></nav></footer>`;
 }
 export function metadata(config, file, title, description, schema) {
   const canonical = new URL(file==='index.html'?'':file,config.baseUrl).href;
