@@ -1,0 +1,23 @@
+{$PAUSECUT_DOMAIN} {
+    # Auth covers HTML, API, originals, previews and downloads.
+    basic_auth {
+        {$PAUSECUT_USER} {$PAUSECUT_PASSWORD_HASH}
+    }
+
+    request_body {
+        max_size 2147483648
+    }
+
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy same-origin
+        Cache-Control "no-store"
+    }
+
+    reverse_proxy pausecut:8080 {
+        transport http {
+            dial_timeout 10s
+            response_header_timeout 3600s
+        }
+    }
+}

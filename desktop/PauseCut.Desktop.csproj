@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>PauseCut.Desktop</AssemblyName>
+    <Product>PauseCut Desktop</Product>
+    <Description>Inicializador desktop do PauseCut com FFmpeg nativo.</Description>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+</Project>

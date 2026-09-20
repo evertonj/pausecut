@@ -1,0 +1,11 @@
+bin/
+obj/
+App_Data/
+tools/
+exports/
+artifacts/
+browser-app/dist/
+.env
+.vs/
+*.user
+tests/fixtures/

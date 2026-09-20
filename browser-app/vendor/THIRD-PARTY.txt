@@ -1,0 +1,23 @@
+PauseCut browser edition uses unmodified third-party artifacts:
+
+@ffmpeg/ffmpeg 0.12.15 (MIT)
+https://github.com/ffmpegwasm/ffmpeg.wasm
+License text: ffmpeg-LICENSE.txt
+
+@ffmpeg/core 0.12.10 (GPL-2.0-or-later; underlying libraries retain their licenses)
+https://github.com/ffmpegwasm/ffmpeg.wasm/tree/main/packages/core
+License text: core-GPL-2.0.txt
+This is the official single-thread ESM core, with FFmpeg and libx264, retrieved
+from the versioned npm registry tarball. See versions.json for versions and SHA512
+integrity checks. Upstream build scripts and dependencies:
+https://github.com/ffmpegwasm/ffmpeg.wasm/tree/main/build
+https://github.com/ffmpegwasm/ffmpeg.wasm/releases
+https://ffmpeg.org/legal.html
+
+@ffmpeg/core-mt 0.12.10 (GPL-2.0-or-later; underlying libraries retain their licenses)
+Official multithread ESM core and pthread worker, with FFmpeg and libx264.
+Same upstream source, license text, build scripts and dependency notices as core.
+Retrieved from the versioned npm registry tarball; SHA512 verified against npm
+metadata before extraction. See versions.json and asset-sha256.json.
+
+No third-party telemetry, analytics, uploads, or remote CDN loading is added.

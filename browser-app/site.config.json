@@ -1,0 +1,15 @@
+{
+  "baseUrl": "https://pausecut.homeforgelab.com/",
+  "adsenseSiteDomain": "homeforgelab.com",
+  "brand": "HomeForgeLab",
+  "responsibleName": "Everton Spindola",
+  "contactEmail": "contato@homeforgelab.com",
+  "githubUrl": "https://github.com/evertonj",
+  "adsensePublisherId": "",
+  "desktopDownload": {
+    "version": "1.0.0",
+    "url": "https://pausecut.homeforgelab.com/downloads/PauseCut-Desktop-Windows-x64.zip",
+    "sha256Url": "https://pausecut.homeforgelab.com/downloads/PauseCut-Desktop-Windows-x64.zip.sha256"
+  },
+  "updatedAt": "2026-09-20"
+}

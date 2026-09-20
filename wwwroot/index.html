@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PauseCut · Corte as pausas, mantenha a conversa</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header><a class="brand" href="/">▥ <span>Pause<span class="accent">Cut</span></span></a><span class="local"><i></i><span id="processingLabel">PROCESSAMENTO DE VÍDEO</span></span></header>
+  <main>
+    <div class="intro"><span class="eyebrow">SEU VÍDEO, NO RITMO CERTO</span><h1>Menos pausas.<br><span>Mais conversa.</span></h1><p>Remova os espaços entre as falas e leve um vídeo pronto<br class="desktop"> para o CapCut ou seu editor favorito.</p></div>
+    <div id="health" class="notice" role="status">Verificando o processamento de vídeo…</div>
+    <div class="workspace">
+      <section class="panel controls">
+        <div class="section-heading"><span class="step">01</span><h2>Seu vídeo</h2><span class="small" id="uploadLimit">MP4</span></div>
+        <label class="dropzone" id="dropzone" for="file"><span class="upload-icon">↥</span><strong id="fileLabel">Arraste um vídeo para cá</strong><span id="fileHint">ou clique para escolher um MP4</span><input id="file" type="file" accept=".mp4,video/mp4"></label>
+        <div id="uploadProgress" class="hidden"><progress id="uploadBar" max="100" value="0"></progress><p class="small" id="uploadText">Enviando…</p></div>
+        <label class="recent hidden" id="recentLabel">Vídeos desta sessão<select id="recent"><option value="">Selecione um vídeo</option></select></label>
+        <div class="divider"></div>
+        <div class="section-heading"><span class="step">02</span><h2>Ajuste os cortes</h2></div>
+        <div class="presets" role="group" aria-label="Presets"><button data-preset="gentle">Suave</button><button class="selected" data-preset="balanced">Equilibrado</button><button data-preset="tight">Ágil</button></div>
+        <label class="setting" for="threshold"><span>Limite de silêncio <output id="thresholdValue">−35 dB</output></span><input id="threshold" type="range" min="-80" max="-5" value="-35"><small>Mais perto de 0 corta sons mais altos. Valores menores preservam a fala baixa.</small></label>
+        <label class="setting" for="minimum"><span>Pausa mínima <output id="minimumValue">180 ms</output></span><input id="minimum" type="range" min="30" max="2000" step="10" value="180"><small>Só remove pausas com essa duração ou mais.</small></label>
+        <label class="setting" for="padding"><span>Margem de fala <output id="paddingValue">40 ms</output></span><input id="padding" type="range" min="0" max="300" step="5" value="40"><small>Preserva essa margem em cada lado da pausa para proteger o início e o fim das palavras.</small></label>
+        <button id="analyze" class="primary" disabled>Analisar pausas <span>→</span></button>
+        <p class="footnote">Comece com Equilibrado. Se as palavras ficarem cortadas, aumente a margem ou diminua o limite de silêncio.</p>
+      </section>
+      <section class="panel review">
+        <div class="section-heading"><span class="step">03</span><h2>Confira e exporte</h2><span id="status" class="badge">AGUARDANDO VÍDEO</span></div>
+        <div class="player-shell"><video id="player" controls playsinline preload="metadata" class="hidden"></video><div id="placeholder"><div class="play-icon">▷</div><strong>O próximo corte começa aqui</strong><p>Carregue um vídeo e analise as pausas<br>para visualizar os trechos que serão removidos.</p></div></div>
+        <div class="player-tabs"><button id="original" class="selected" disabled>Original</button><button id="result" disabled>Resultado</button><span id="videoName"></span></div>
+        <div id="workProgress" class="hidden"><div class="progress-caption"><span id="workText">Analisando áudio…</span><span id="percent">0%</span></div><progress id="workBar" max="100" value="0"></progress><button class="text-button" id="cancel">Cancelar processamento</button></div>
+        <div id="message" class="notice hidden" role="status" aria-live="polite"></div>
+        <div class="stats"><div><span>ORIGINAL</span><strong id="duration">—</strong></div><div><span>SEM PAUSAS</span><strong id="newDuration">—</strong></div><div><span>TEMPO REMOVIDO</span><strong id="saved" class="accent">—</strong></div></div>
+        <div class="timeline-header"><strong>Mapa dos cortes</strong><span><i class="legend"></i> Pausa removida</span></div>
+        <canvas id="timeline" height="46" aria-label="Intervalos removidos do vídeo"></canvas>
+        <div class="cut-summary"><span id="cutCount">Nenhum vídeo analisado</span><button id="toggleCuts" class="text-button" disabled>Ver cortes</button></div>
+        <div id="cuts" class="hidden"><table><thead><tr><th>Corte</th><th>Início</th><th>Fim</th><th>Removido</th><th>Prévia</th></tr></thead><tbody id="cutRows"></tbody></table><p id="cutNote" class="small"></p></div>
+        <div class="export-actions"><button id="export" class="primary" disabled>Exportar vídeo sem pausas <span>↓</span></button><a id="download" class="primary hidden" download>Baixar MP4 <span>↓</span></a><button id="report" class="secondary" disabled>Relatório JSON</button></div>
+        <p class="footnote">MP4 · H.264 + AAC · A primeira faixa de áudio orienta os cortes.<br>Os cortes respeitam os quadros do vídeo. Música e ruído podem esconder pausas.</p>
+        <button id="delete" class="text-button danger" disabled>Excluir este vídeo e seus arquivos</button>
+      </section>
+    </div>
+    <footer><span>PauseCut / pré-edição de vídeo</span><span id="storageLabel">Os arquivos são temporários. Baixe o resultado antes de encerrar a sessão.</span></footer>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

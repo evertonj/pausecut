@@ -1,0 +1,66 @@
+services:
+  pausecut:
+    build: .
+    restart: unless-stopped
+    init: true
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      AllowedHosts: "${PAUSECUT_DOMAIN:?Defina PAUSECUT_DOMAIN no arquivo .env};localhost"
+      Deployment__TrustedProxy: "172.31.248.2"
+      Video__FfmpegPath: ffmpeg
+      Video__FfprobePath: ffprobe
+      Video__ProcessingLocation: server
+      Video__MaxUploadBytes: "2147483648"
+      Video__RetentionHours: "24"
+    volumes:
+      - video_data:/app/App_Data
+    networks:
+      processing:
+        ipv4_address: 172.31.248.3
+    # The app is reachable only through the authenticated HTTPS proxy.
+    expose:
+      - "8080"
+    stop_grace_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    environment:
+      PAUSECUT_DOMAIN: "${PAUSECUT_DOMAIN:?Defina PAUSECUT_DOMAIN no arquivo .env}"
+      PAUSECUT_USER: "${PAUSECUT_USER:?Defina PAUSECUT_USER no arquivo .env}"
+      PAUSECUT_PASSWORD_HASH: "${PAUSECUT_PASSWORD_HASH:?Defina PAUSECUT_PASSWORD_HASH no arquivo .env}"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      processing:
+        ipv4_address: 172.31.248.2
+    depends_on:
+      pausecut:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  processing:
+    ipam:
+      config:
+        - subnet: 172.31.248.0/24
+
+volumes:
+  video_data:
+  caddy_data:
+  caddy_config:

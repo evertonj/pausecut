@@ -1,0 +1,14 @@
+# Runtime image for the ZIP package, which contains the precompiled app/ folder.
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg curl \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY app/ ./
+RUN mkdir -p /app/App_Data/jobs && chown -R app:app /app/App_Data
+ENV ASPNETCORE_URLS=http://+:8080 ASPNETCORE_ENVIRONMENT=Production
+USER app
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=15s --start-period=30s --retries=3 \
+    CMD curl -fsS http://localhost:8080/api/health | grep -q '"ready":true' || exit 1
+ENTRYPOINT ["dotnet", "PauseCut.dll"]

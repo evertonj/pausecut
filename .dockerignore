@@ -1,0 +1,12 @@
+.git
+.vs
+.env
+bin
+obj
+tests
+tools
+exports
+App_Data
+artifacts
+browser-app
+*.zip
